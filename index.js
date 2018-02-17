@@ -1,7 +1,8 @@
 'use strict'
-const fs = require('graceful-fs')
+const gracefulFs = require('graceful-fs')
 
-module.exports = (existingPath, newPath) => {
+module.exports = (existingPath, newPath, customFs) => {
+  const fs = customFs || gracefulFs
   return new Promise((resolve, reject) => {
     fs.link(existingPath, newPath, err => {
       if (!err) {
@@ -18,7 +19,8 @@ module.exports = (existingPath, newPath) => {
   })
 }
 
-module.exports.sync = (existingPath, newPath) => {
+module.exports.sync = (existingPath, newPath, customFs) => {
+  const fs = customFs || gracefulFs
   try {
     fs.linkSync(existingPath, newPath)
     fs.unlinkSync(newPath)
