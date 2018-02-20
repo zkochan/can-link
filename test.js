@@ -41,11 +41,11 @@ test('canLink() returns false', t => {
     link: (existingPath, newPath, cb) => cb(exdevErr),
     unlink: (p, cb) => cb()
   })
-  .then(can => {
-    t.notOk(can)
-    t.end()
-  })
-  .catch(t.end)
+    .then(can => {
+      t.notOk(can)
+      t.end()
+    })
+    .catch(t.end)
 })
 
 test('canLink() returns false on EACCES error', t => {
@@ -53,22 +53,22 @@ test('canLink() returns false on EACCES error', t => {
     link: (existingPath, newPath, cb) => cb(eaccesErr),
     unlink: (p, cb) => cb()
   })
-  .then(can => {
-    t.notOk(can)
-    t.end()
-  })
-  .catch(t.end)
+    .then(can => {
+      t.notOk(can)
+      t.end()
+    })
+    .catch(t.end)
 })
 
 test('canLink() non-exdev error passed through', t => {
   canLink('package.json', 'node_modules/package.json', {
     link: (existingPath, newPath, cb) => cb(new Error('EPERM'))
   })
-  .then(can => {
-    t.fail('should have failed')
-  })
-  .catch(err => {
-    t.ok(err)
-    t.end()
-  })
+    .then(can => {
+      t.fail('should have failed')
+    })
+    .catch(err => {
+      t.ok(err)
+      t.end()
+    })
 })
