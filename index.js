@@ -10,7 +10,7 @@ module.exports = (existingPath, newPath, customFs) => {
         resolve(true)
         return
       }
-      if (err.code === 'EXDEV' || err.code === 'EACCES') {
+      if (err.code === 'EXDEV' || err.code === 'EACCES' || err.code === 'EPERM') {
         resolve(false)
         return
       }
@@ -26,7 +26,7 @@ module.exports.sync = (existingPath, newPath, customFs) => {
     fs.unlinkSync(newPath)
     return true
   } catch (err) {
-    if (err.code === 'EXDEV' || err.code === 'EACCES') {
+    if (err.code === 'EXDEV' || err.code === 'EACCES' || err.code === 'EPERM') {
       return false
     }
     throw err

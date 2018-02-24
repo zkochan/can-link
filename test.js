@@ -8,6 +8,9 @@ exdevErr.code = 'EXDEV'
 const eaccesErr = new Error('EACCES: permission denied, link')
 eaccesErr.code = 'EACCES'
 
+const epermErr = new Error('EPERM: permission denied, link')
+epermErr.code = 'EPERM'
+
 test('canLink.sync()', t => {
   t.ok(canLink.sync('package.json', 'node_modules/package.json'))
   t.notOk(canLink.sync('foo', 'bar', {
@@ -18,12 +21,16 @@ test('canLink.sync()', t => {
     linkSync: () => { throw eaccesErr },
     unlinkSync: () => {}
   }), 'cannot link on EACCES error')
+  t.notOk(canLink.sync('foo', 'bar', {
+    linkSync: () => { throw epermErr },
+    unlinkSync: () => {}
+  }), 'cannot link on EPERM error')
   t.throws(() => {
     const fsMock = {
-      linkSync: () => { throw new Error('EPERM') }
+      linkSync: () => { throw new Error('Error') }
     }
     canLink.sync('foo', 'bar', fsMock)
-  }, /EPERM/, 'errors are passed through if they are not EXDEV')
+  }, /Error/, 'errors are passed through if they are not EXDEV')
   t.end()
 })
 
@@ -60,9 +67,21 @@ test('canLink() returns false on EACCES error', t => {
     .catch(t.end)
 })
 
+test('canLink() returns false on EPERM error', t => {
+  canLink('package.json', 'node_modules/package.json', {
+    link: (existingPath, newPath, cb) => cb(epermErr),
+    unlink: (p, cb) => cb()
+  })
+    .then(can => {
+      t.notOk(can)
+      t.end()
+    })
+    .catch(t.end)
+})
+
 test('canLink() non-exdev error passed through', t => {
   canLink('package.json', 'node_modules/package.json', {
-    link: (existingPath, newPath, cb) => cb(new Error('EPERM'))
+    link: (existingPath, newPath, cb) => cb(new Error('Error'))
   })
     .then(can => {
       t.fail('should have failed')
