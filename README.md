@@ -1,3 +1,5 @@
+> this package has been moved to https://github.com/zkochan/packages/tree/master/can-link
+
 # can-link
 
 > Returns true if a link can be created
